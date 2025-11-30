@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+/* Light theme (default) */
+:root {
+  color-scheme: light;
+
+  --page-bg: #f9fafb;        /* slate-50-ish */
+  --page-fg: #020617;        /* slate-950-ish */
+
+  --card-bg: #ffffff;
+  --sidebar-bg: #f3f4f6;     /* gray-100 */
+  --border-color: #e5e7eb;   /* gray-200 */
+  --muted-fg: #6b7280;       /* gray-500 */
+
+  --accent-bg: #22c55e;      /* emerald-500 */
+  --accent-fg: #020617;
+
+  --input-bg: #ffffff;
+  --input-border: #e5e7eb;
+  --input-fg: #020617;
+}
+
+/* Dark theme */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --page-bg: #020617;        /* slate-950 */
+  --page-fg: #f9fafb;        /* slate-50 */
+
+  --card-bg: rgba(15, 23, 42, 0.9); /* slate-900-ish */
+  --sidebar-bg: #020617;
+  --border-color: #1f2937;   /* gray-800 */
+  --muted-fg: #9ca3af;       /* gray-400 */
+
+  --accent-bg: #22c55e;
+  --accent-fg: #020617;
+
+  --input-bg: #020617;
+  --input-border: #1f2937;
+  --input-fg: #f9fafb;
+}
+
+body {
+  margin: 0;
+  background-color: var(--page-bg);
+  color: var(--page-fg);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    "Segoe UI", sans-serif;
+}
+
+/* Sidebar layout + colors */
+.bbs-sidebar {
+  background-color: var(--sidebar-bg);
+  color: var(--muted-fg);
+  border-right: 1px solid var(--border-color);
+}
+
+/* Section labels like "NAVIGATION", "MODULES" */
+.bbs-sidebar__section-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted-fg);
+}
+
+/* Base item */
+.bbs-sidebar__item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 12px;
+  font-weight: 500;
+  border: none;
+  background: transparent;
+  color: var(--muted-fg);
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  text-decoration: none;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+/* Hover state */
+.bbs-sidebar__item:hover {
+  background-color: rgba(148, 163, 184, 0.12); /* slate-400-ish with alpha */
+  color: var(--page-fg);
+}
+
+/* Active (selected) item */
+.bbs-sidebar__item--active {
+  background-color: var(--accent-bg);
+  color: var(--accent-fg);
+}
+
+/* Remove browser default link colors if using <a> */
+.bbs-sidebar__item:link,
+.bbs-sidebar__item:visited {
+  color: inherit;
+}
