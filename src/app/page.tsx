@@ -6,13 +6,13 @@ import Link from "next/link";
 import { MODULES } from "@/lib/modules/registry";
 import { BusinessKyc } from "@/types/kyc";
 
-// --- SAME COMPLETION LOGIC AS KYC FORM (adapted for nullable) ---
+// --- Completion logic mirroring KYC form (typing relaxed a bit for TS) ---
 function calculateCompletion(kyc: BusinessKyc | null) {
   if (!kyc) {
     return { percent: 0, filled: 0, total: 0 };
   }
 
-  const importantFields: (keyof BusinessKyc)[] = [
+  const importantFields = [
     "businessName",
     "shortDescription",
     "industry",
@@ -30,13 +30,14 @@ function calculateCompletion(kyc: BusinessKyc | null) {
     "paymentMethods",
     "serviceHours",
     "policyText",
-  ];
+  ] as const;
 
   let total = importantFields.length + 1; // +1 for "has at least one offer"
   let filled = 0;
 
   importantFields.forEach((key) => {
-    const val = kyc[key];
+    // Relaxed type here because BusinessKyc may not declare every string literal
+    const val = (kyc as any)[key] as unknown;
     if (typeof val === "string" && val.trim().length > 0) {
       filled += 1;
     }
@@ -85,9 +86,7 @@ export default function DashboardPage() {
   const rawBusinessName = kyc?.businessName?.trim() || "";
   const hasProfileName = !!rawBusinessName && completion.percent > 0;
 
-  // Better copy:
-  // - before KYC: "Set up your business"
-  // - after KYC: real business name
+  // Before KYC: "Set up your business", after KYC: actual business name
   const workspaceLabel = hasProfileName
     ? rawBusinessName
     : "Set up your business";
