@@ -1,10 +1,11 @@
-import NextAuth, { type NextAuthOptions } from "next-auth";
+import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
 import type { AdapterUser } from "next-auth/adapters";
+import type { NextAuthOptions } from "next-auth";
 
-export const authOptions: NextAuthOptions = {
+export const authOptions = {
   adapter: PrismaAdapter(prisma),
 
   providers: [
@@ -18,7 +19,12 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
 
+  // ✅ This exists at runtime but isn't in the TS type yet,
+  // so we allow it via `satisfies` below.
+  allowDangerousEmailAccountLinking: true,
+
   callbacks: {
+    // Attach user.id to JWT on sign-in
     async jwt({ token, user }) {
       if (user) {
         const u = user as AdapterUser;
@@ -27,13 +33,19 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
 
+    // Expose id to the client
     async session({ session, token }) {
-      if (token?.id && session.user) {
+      if (session.user && token.id) {
         session.user.id = token.id as string;
       }
       return session;
     },
   },
+
+  debug: process.env.NODE_ENV === "development",
+} satisfies NextAuthOptions & {
+  // extra field that the runtime supports
+  allowDangerousEmailAccountLinking: boolean;
 };
 
 export default NextAuth(authOptions);
