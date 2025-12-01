@@ -12,7 +12,8 @@ type Theme = "light" | "dark";
 const KYC_STORAGE_KEY = "bbs_kyc_cache_v3";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
+  const rawPathname = usePathname();
+  const pathname = rawPathname ?? "/"; // ✅ normalize to non-null string
   const router = useRouter();
   const { data: session } = useSession();
 
@@ -81,7 +82,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         setBusinessName(null);
       }
     })();
-  }, [session?.user?.id]);
+  }, [session?.user?.email]); // ✅ no id
 
   // Listen for KYC updates from the form (only used for sidebar label)
   useEffect(() => {

@@ -31,7 +31,7 @@ export interface ProductItem {
 
 
 export interface BusinessKyc {
-  // PAGE 1 – BASICS
+  // --- Page 1 – Basics ---
   businessName: string;
   tagline: string;
   shortDescription: string;
@@ -39,37 +39,35 @@ export interface BusinessKyc {
   businessModel: BusinessModel;
   locationCity: string;
   locationCountry: string;
-  websiteUrl?: string;
-  whatsappNumber?: string;
-  instagramHandle?: string;
+  websiteUrl: string;
+  whatsappNumber: string;
+  instagramHandle: string;
 
-   // PAGE 2 – PRODUCTS & PRICING (OPTIONAL)
+  // --- Page 2 – Products ---
   products: ProductItem[];
 
-
-  // PAGE 3 – AUDIENCE & VOICE
+  // --- Page 3 – Audience & Voice ---
   targetAudience: string;
-  mainPainPoints: string; // free text; one per line or comma-separated
+  mainPainPoints: string;
   dreamOutcome: string;
   brandTone: BrandTone;
   languagePreference: LanguagePreference;
   writingStyle: WritingStyle;
   emojiPreference: EmojiPreference;
 
-  // PAGE 4 – POLICIES (OPTIONAL)
-  shippingSummary?: string;
-  returnPolicySummary?: string;
-  refundPolicySummary?: string;
-  paymentMethods?: string; // free text, e.g. "UPI, cards, COD"
-  serviceHours?: string;
+  // --- Page 4 – Policies & guardrails ---
+  shippingSummary: string;
+  returnPolicySummary: string;
+  refundPolicySummary: string;
+  paymentMethods: string;
+  serviceHours: string;
 
-  // Extras (optional for later use)
-  testimonials?: {
-    customerFirstName?: string;
-    quote: string;
-  }[];
-  faqItems?: {
-    question: string;
-    answer: string;
-  }[];
+  // 🔴 These two are missing and causing all the TS errors:
+  policyText: string;   // global content / policy rules text
+  policyUrl: string;    // optional link to a policy doc
+
+  // --- Extras (whatever you already had) ---
+  testimonials: any[];
+  faqItems: any[];
 }
+
