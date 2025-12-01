@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
 import { getKycForCurrentUser, stringifyKyc } from "@/lib/kyc";
 import { generateText } from "@/lib/openai";
+import { prisma } from "@/lib/prisma";
 
 type GenerateBody = {
   moduleId: string;

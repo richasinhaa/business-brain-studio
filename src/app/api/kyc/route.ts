@@ -1,7 +1,7 @@
 // src/app/api/kyc/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
-import { prisma } from "@/lib/prisma"; // raw PrismaClient
+import { prisma } from "@/lib/prisma";
 
 // If you also use a db wrapper somewhere else, that's fine.
 // Here we talk directly to `prisma` for clarity.
