@@ -4,10 +4,10 @@ export default function salesscriptsPage() {
   return (
     <ModuleLayout
       title="sales scripts"
-      description="Module UI coming soon. Wire this page to /api/generate with its own prompt."
+      description="Module UI coming soon."
     >
       <p className="text-xs text-slate-400">
-        TODO: Build this module's form, call /api/generate with moduleId="sales-scripts" and render output.
+        TODO: Build this module form.
       </p>
     </ModuleLayout>
   );

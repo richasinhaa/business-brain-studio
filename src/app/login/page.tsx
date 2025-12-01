@@ -1,4 +1,3 @@
-// src/app/login/page.tsx
 "use client";
 
 import { useEffect } from "react";
@@ -7,13 +6,11 @@ import { signIn, useSession } from "next-auth/react";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { status } = useSession(); // ✅ only use status now
   const searchParams = useSearchParams();
 
-  // Safely read callbackUrl, fallback to "/"
   const callbackUrl = searchParams?.get("callbackUrl") ?? "/";
 
-  // If already authenticated, redirect to callbackUrl
   useEffect(() => {
     if (status === "authenticated") {
       router.replace(callbackUrl);

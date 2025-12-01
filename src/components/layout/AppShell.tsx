@@ -1,4 +1,3 @@
-// src/components/layout/AppShell.tsx
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -11,9 +10,13 @@ type Theme = "light" | "dark";
 
 const KYC_STORAGE_KEY = "bbs_kyc_cache_v3";
 
+type KycUpdatedDetail = {
+  businessName?: string;
+};
+
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const rawPathname = usePathname();
-  const pathname = rawPathname ?? "/"; // ✅ normalize to non-null string
+  const pathname = rawPathname ?? "/";
   const router = useRouter();
   const { data: session } = useSession();
 
@@ -52,7 +55,6 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
   /* ========== KYC PREFETCH + SIDEBAR NAME ========== */
 
-  // Fetch KYC once per logged-in user, cache to localStorage, and update sidebar name
   useEffect(() => {
     if (!session?.user) return;
 
@@ -82,22 +84,24 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         setBusinessName(null);
       }
     })();
-  }, [session?.user?.email]); // ✅ no id
+  }, [session?.user]);
 
   // Listen for KYC updates from the form (only used for sidebar label)
   useEffect(() => {
     if (typeof window === "undefined") return;
 
     const handler = (event: Event) => {
-      const anyEvent = event as any;
-      const name = anyEvent?.detail?.businessName;
+      const customEvent = event as CustomEvent<KycUpdatedDetail>;
+      const name = customEvent.detail?.businessName;
       if (typeof name === "string") {
         setBusinessName(name);
       }
     };
 
-    window.addEventListener("bbs-kyc-updated", handler);
-    return () => window.removeEventListener("bbs-kyc-updated", handler);
+    window.addEventListener("bbs-kyc-updated", handler as EventListener);
+    return () => {
+      window.removeEventListener("bbs-kyc-updated", handler as EventListener);
+    };
   }, []);
 
   const displayName =
@@ -115,7 +119,6 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       .toUpperCase() || "B";
 
   const handleLogout = async () => {
-    // Clear KYC cache on logout
     try {
       if (typeof window !== "undefined") {
         window.localStorage.removeItem(KYC_STORAGE_KEY);
@@ -130,8 +133,6 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       router.replace("/login");
     }
   };
-
-  /* ========== AUTH LAYOUT (LOGIN PAGE) ========== */
 
   if (isAuthPage) {
     return (
@@ -166,8 +167,6 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       </div>
     );
   }
-
-  /* ========== APP LAYOUT (DASHBOARD + MODULES) ========== */
 
   return (
     <div className="min-h-screen flex flex-col bg-[var(--page-bg)] text-[var(--page-fg)]">
@@ -284,8 +283,6 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
-
-/* === Reusable nav item === */
 
 type NavItemProps = {
   href: string;

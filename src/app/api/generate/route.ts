@@ -1,12 +1,17 @@
+// src/app/api/generate/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
 import { getKycForCurrentUser, stringifyKyc } from "@/lib/kyc";
 import { generateText } from "@/lib/openai";
-import { prisma } from "@/lib/prisma";
+
+type ReplyAssistantInput = {
+  customerMessage?: string;
+  scenario?: string;
+};
 
 type GenerateBody = {
   moduleId: string;
-  input: any;
+  input: unknown;
 };
 
 export async function POST(req: NextRequest) {
@@ -15,7 +20,28 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { moduleId, input } = (await req.json()) as GenerateBody;
+  let body: unknown;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
+
+  if (!body || typeof body !== "object") {
+    return NextResponse.json(
+      { error: "Request body must be an object" },
+      { status: 400 }
+    );
+  }
+
+  const { moduleId, input } = body as GenerateBody;
+
+  if (!moduleId || typeof moduleId !== "string") {
+    return NextResponse.json(
+      { error: "moduleId is required" },
+      { status: 400 }
+    );
+  }
 
   const kyc = await getKycForCurrentUser();
   if (!kyc) {
@@ -30,7 +56,22 @@ export async function POST(req: NextRequest) {
 
   switch (moduleId) {
     case "reply-assistant": {
-      const { customerMessage, scenario } = input;
+      if (!input || typeof input !== "object") {
+        return NextResponse.json(
+          { error: "Invalid input for reply-assistant" },
+          { status: 400 }
+        );
+      }
+
+      const { customerMessage, scenario } = input as ReplyAssistantInput;
+
+      if (!customerMessage || typeof customerMessage !== "string") {
+        return NextResponse.json(
+          { error: "customerMessage is required" },
+          { status: 400 }
+        );
+      }
+
       prompt = `
 You are an AI assistant for this business:
 
@@ -69,7 +110,10 @@ Write:
     }
 
     default:
-      return NextResponse.json({ error: "Unknown moduleId" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Unknown moduleId" },
+        { status: 400 }
+      );
   }
 
   const text = await generateText(prompt);

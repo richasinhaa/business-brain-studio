@@ -58,7 +58,7 @@ export default function ReplyAssistantPage() {
         <textarea
           value={customerMessage}
           onChange={(e) => setCustomerMessage(e.target.value)}
-          placeholder="Paste the customer's message here..."
+          placeholder="Paste the customer message here..."
           className="w-full min-h-[140px] rounded border px-3 py-2 text-xs outline-none focus:ring-1 focus:ring-emerald-500 bg-[var(--input-bg)] border-[var(--input-border)] text-[var(--input-fg)]"
         />
 

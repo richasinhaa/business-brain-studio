@@ -1,3 +1,4 @@
+// src/components/kyc/KycForm.tsx
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -28,6 +29,10 @@ const stepDescriptions: string[] = [
   "Who you sell to and how you sound everywhere.",
   "Shipping, returns, payments & rules the AI must follow.",
 ];
+
+type KycUpdatedDetail = {
+  businessName?: string;
+};
 
 // -------- Defaults --------
 const makeDefaultProduct = (index: number): ProductItem => ({
@@ -100,7 +105,7 @@ function calculateCompletion(kyc: BusinessKyc) {
     "policyText",
   ];
 
-  let total = importantFields.length + 1; // +1 for "has at least one offer"
+  const total = importantFields.length + 1; // +1 for "has at least one offer"
   let filled = 0;
 
   importantFields.forEach((key) => {
@@ -155,7 +160,7 @@ export default function KycForm() {
         if (res.ok) {
           const data = await res.json();
           if (data) {
-            const merged = { ...EMPTY_KYC, ...data };
+            const merged: BusinessKyc = { ...EMPTY_KYC, ...data };
             if (!Array.isArray(merged.products)) merged.products = [];
             setKyc(merged);
             localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
@@ -227,16 +232,18 @@ export default function KycForm() {
         body: JSON.stringify(kyc),
       });
 
-      let data: any = null;
+      let data: unknown = null;
       try {
         data = await res.json();
       } catch {
-        // ignore
+        data = null;
       }
 
       if (!res.ok) {
+        const parsed = (data as { error?: string } | null) ?? null;
         const friendly =
-          data?.error || "Something went wrong while saving. Please try again.";
+          parsed?.error ||
+          "Something went wrong while saving. Please try again.";
         setErrorMessage(friendly);
         setTimeout(() => setErrorMessage(""), 4000);
         return;
@@ -247,7 +254,7 @@ export default function KycForm() {
 
       // notify shell so sidebar name updates
       window.dispatchEvent(
-        new CustomEvent("bbs-kyc-updated", {
+        new CustomEvent<KycUpdatedDetail>("bbs-kyc-updated", {
           detail: { businessName: kyc.businessName },
         })
       );

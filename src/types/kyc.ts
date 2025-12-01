@@ -1,18 +1,5 @@
 // src/types/kyc.ts
 
-export type BrandTone =
-  | "friendly"
-  | "formal"
-  | "luxury"
-  | "playful"
-  | "empathetic";
-
-export type LanguagePreference = "english" | "hindi" | "hinglish";
-
-export type WritingStyle = "short" | "medium" | "long" | "storytelling";
-
-export type EmojiPreference = "no-emojis" | "few-emojis" | "emoji-heavy";
-
 export type BusinessModel =
   | "product"
   | "service"
@@ -20,18 +7,43 @@ export type BusinessModel =
   | "info-product"
   | "saas";
 
+export type BrandTone =
+  | "friendly"
+  | "formal"
+  | "luxury"
+  | "playful"
+  | "empathetic";
+
+export type LanguagePreference = "hinglish" | "english" | "hindi";
+
+export type WritingStyle = "short" | "medium" | "long" | "storytelling";
+
+export type EmojiPreference = "no-emojis" | "few-emojis" | "emoji-heavy";
+
 export interface ProductItem {
   id: string;
   name: string;
   shortDescription: string;
-  priceText: string; // "₹999" or "Starts at ₹1,499"
+  priceText: string;
   category?: string;
   isBestSeller?: boolean;
 }
 
+export interface Testimonial {
+  id: string;
+  quote: string;
+  name?: string;
+  role?: string;
+}
+
+export interface FaqItem {
+  id: string;
+  question: string;
+  answer: string;
+}
 
 export interface BusinessKyc {
-  // --- Page 1 – Basics ---
+  // Basics
   businessName: string;
   tagline: string;
   shortDescription: string;
@@ -43,10 +55,10 @@ export interface BusinessKyc {
   whatsappNumber: string;
   instagramHandle: string;
 
-  // --- Page 2 – Products ---
+  // Products
   products: ProductItem[];
 
-  // --- Page 3 – Audience & Voice ---
+  // Audience & Voice
   targetAudience: string;
   mainPainPoints: string;
   dreamOutcome: string;
@@ -55,19 +67,16 @@ export interface BusinessKyc {
   writingStyle: WritingStyle;
   emojiPreference: EmojiPreference;
 
-  // --- Page 4 – Policies & guardrails ---
+  // Policies & guardrails
   shippingSummary: string;
   returnPolicySummary: string;
   refundPolicySummary: string;
   paymentMethods: string;
   serviceHours: string;
+  policyText: string;
+  policyUrl: string;
 
-  // 🔴 These two are missing and causing all the TS errors:
-  policyText: string;   // global content / policy rules text
-  policyUrl: string;    // optional link to a policy doc
-
-  // --- Extras (whatever you already had) ---
-  testimonials: any[];
-  faqItems: any[];
+  // Extras
+  testimonials: Testimonial[];
+  faqItems: FaqItem[];
 }
-
