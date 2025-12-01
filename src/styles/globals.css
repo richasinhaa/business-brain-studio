@@ -1,101 +1,123 @@
 @import "tailwindcss";
 
-/* Light theme (default) */
+/* ========== THEME TOKENS ========== */
+/* LIGHT as default */
 :root {
-  color-scheme: light;
-
-  --page-bg: #f9fafb;        /* slate-50-ish */
-  --page-fg: #020617;        /* slate-950-ish */
-
+  /* Layout & typography */
+  --page-bg: #f5f7fb;          /* soft blue-gray */
+  --page-fg: #020617;          /* slate-950 */
+  --sidebar-bg: #eef2f9;       /* very light bluish */
   --card-bg: #ffffff;
-  --sidebar-bg: #f3f4f6;     /* gray-100 */
-  --border-color: #e5e7eb;   /* gray-200 */
-  --muted-fg: #6b7280;       /* gray-500 */
+  --border-color: #e2e8f0;
+  --muted-fg: #6b7280;         /* gray-500 */
+  --card-muted-fg: #6b7280;
 
-  --accent-bg: #22c55e;      /* emerald-500 */
-  --accent-fg: #020617;
-
+  /* Inputs */
   --input-bg: #ffffff;
-  --input-border: #e5e7eb;
+  --input-border: #d1d5db;
   --input-fg: #020617;
+
+  /* Accent – indigo / lavender */
+  --accent-bg: #6366f1;        /* indigo-500 */
+  --accent-fg: #eef2ff;        /* indigo-50 */
+  --accent-soft-bg: rgba(99, 102, 241, 0.08);
+
+  /* Supporting / info colors */
+  --info-bg: rgba(59, 130, 246, 0.06);   /* blue-500 soft */
+  --info-fg: #2563eb;
+
+  /* Tailwind hook */
+  --background: var(--page-bg);
+  --foreground: var(--page-fg);
 }
 
-/* Dark theme */
+/* DARK theme overrides */
 :root[data-theme="dark"] {
-  color-scheme: dark;
-
-  --page-bg: #020617;        /* slate-950 */
-  --page-fg: #f9fafb;        /* slate-50 */
-
-  --card-bg: rgba(15, 23, 42, 0.9); /* slate-900-ish */
+  --page-bg: #020617;          /* slate-950 */
+  --page-fg: #e5e7eb;          /* gray-200 */
   --sidebar-bg: #020617;
-  --border-color: #1f2937;   /* gray-800 */
-  --muted-fg: #9ca3af;       /* gray-400 */
-
-  --accent-bg: #22c55e;
-  --accent-fg: #020617;
+  --card-bg: #020617;
+  --border-color: #1f2937;     /* gray-800 */
+  --muted-fg: #9ca3af;         /* gray-400 */
+  --card-muted-fg: #9ca3af;
 
   --input-bg: #020617;
-  --input-border: #1f2937;
-  --input-fg: #f9fafb;
+  --input-border: #374151;
+  --input-fg: #e5e7eb;
+
+  --accent-bg: #818cf8;        /* indigo-400/500 */
+  --accent-fg: #020617;        /* dark text on accent */
+  --accent-soft-bg: rgba(129, 140, 248, 0.16);
+
+  --info-bg: rgba(59, 130, 246, 0.18);
+  --info-fg: #60a5fa;
+
+  --background: var(--page-bg);
+  --foreground: var(--page-fg);
+}
+
+/* Connect to Tailwind’s design tokens (v4) */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+/* ========== BASE STYLES ========== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
 }
 
 body {
-  margin: 0;
-  background-color: var(--page-bg);
+  background: radial-gradient(circle at top left, #eef2ff 0, #f5f7fb 40%, var(--page-bg) 100%);
   color: var(--page-fg);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
     "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Sidebar layout + colors */
-.bbs-sidebar {
-  background-color: var(--sidebar-bg);
-  color: var(--muted-fg);
-  border-right: 1px solid var(--border-color);
+/* Ensure buttons/inputs inherit font properly */
+button,
+input,
+textarea,
+select {
+  font: inherit;
 }
 
-/* Section labels like "NAVIGATION", "MODULES" */
-.bbs-sidebar__section-label {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--muted-fg);
+/* Basic form look that respects theme */
+input,
+textarea,
+select {
+  background-color: var(--input-bg);
+  color: var(--input-fg);
+  border: 1px solid var(--input-border);
 }
 
-/* Base item */
-.bbs-sidebar__item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.4rem 0.75rem;
-  border-radius: 0.5rem;
-  font-size: 12px;
-  font-weight: 500;
-  border: none;
-  background: transparent;
-  color: var(--muted-fg);
-  cursor: pointer;
-  width: 100%;
-  text-align: left;
-  text-decoration: none;
-  transition: background-color 150ms ease, color 150ms ease;
+/* Generic "card" helper */
+.bbs-card {
+  border-radius: 1rem;
+  border: 1px solid var(--border-color);
+  background-color: var(--card-bg);
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.06);
 }
 
-/* Hover state */
-.bbs-sidebar__item:hover {
-  background-color: rgba(148, 163, 184, 0.12); /* slate-400-ish with alpha */
-  color: var(--page-fg);
-}
-
-/* Active (selected) item */
-.bbs-sidebar__item--active {
-  background-color: var(--accent-bg);
-  color: var(--accent-fg);
-}
-
-/* Remove browser default link colors if using <a> */
-.bbs-sidebar__item:link,
-.bbs-sidebar__item:visited {
-  color: inherit;
+/* Soft hero background for top KYC card */
+.bbs-hero {
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.07),
+    rgba(236, 252, 203, 0)
+  );
 }

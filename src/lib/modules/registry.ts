@@ -1,63 +1,81 @@
-import type { ModuleConfig } from "@/types/modules";
+// src/lib/modules/registry.ts
+import type { ComponentType } from "react";
+import {
+  MessageCircle,
+  FileText,
+  Megaphone,
+  Image,
+  Tag,
+  PhoneCall,
+  Star,
+  User2,
+} from "lucide-react";
 
-export const MODULES: ModuleConfig[] = [
+export type ModuleDef = {
+  id: string;
+  name: string;
+  description: string;
+  route: string;
+  // icon is a React component (Lucide)
+  icon: ComponentType<{ className?: string }>;
+};
+
+export const MODULES: ModuleDef[] = [
   {
-    id: "reply-assistant",
+    id: "customer-reply",
     name: "Customer Reply Assistant",
-    description: "Generate perfect customer replies based on your business profile.",
-    icon: "💬",
-    route: "/modules/reply-assistant",
+    description:
+      "Generate perfect customer replies based on your business profile.",
+    route: "/modules/customer-reply",
+    icon: MessageCircle,
   },
   {
     id: "website-content",
     name: "Website Content Studio",
     description: "Homepage copy, about section, and more.",
-    icon: "🖥️",
     route: "/modules/website-content",
+    icon: FileText,
   },
   {
     id: "whatsapp-broadcast",
     name: "WhatsApp Broadcast Generator",
     description: "Campaign messages for offers and launches.",
-    icon: "📢",
     route: "/modules/whatsapp-broadcast",
+    icon: Megaphone,
   },
   {
-    id: "instagram-captions",
+    id: "instagram-caption",
     name: "Instagram Caption Studio",
     description: "Scroll-stopping captions tailored to your brand.",
-    icon: "📸",
     route: "/modules/instagram-captions",
+    icon: Image,
   },
   {
-    id: "product-descriptions",
+    id: "product-description",
     name: "Product Description Maker",
     description: "SEO-friendly, convincing product descriptions.",
-    icon: "🛒",
     route: "/modules/product-descriptions",
+    icon: Tag,
   },
   {
-    id: "sales-scripts",
+    id: "sales-script",
     name: "Sales Script Writer",
     description: "DM and call scripts that convert.",
-    icon: "🔥",
     route: "/modules/sales-scripts",
+    icon: PhoneCall,
   },
   {
-    id: "review-requests",
+    id: "review-request",
     name: "Review Request Messages",
     description: "Polite, effective review request templates.",
-    icon: "⭐",
     route: "/modules/review-requests",
+    icon: Star,
   },
   {
     id: "about-bio",
     name: "About & Bio Writer",
     description: "Bios for WhatsApp, Instagram, and your site.",
-    icon: "👤",
     route: "/modules/about-bio",
+    icon: User2,
   },
 ];
-
-export const getModuleById = (id: string) =>
-  MODULES.find((m) => m.id === id);

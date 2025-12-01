@@ -1,10 +1,62 @@
 @import "tailwindcss";
 
+/* ========== THEME TOKENS ========== */
+/* LIGHT as default */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Layout & typography */
+  --page-bg: #f5f7fb;          /* soft blue-gray */
+  --page-fg: #020617;          /* slate-950 */
+  --sidebar-bg: #eef2f9;       /* very light bluish */
+  --card-bg: #ffffff;
+  --border-color: #e2e8f0;
+  --muted-fg: #6b7280;         /* gray-500 */
+  --card-muted-fg: #6b7280;
+
+  /* Inputs */
+  --input-bg: #ffffff;
+  --input-border: #d1d5db;
+  --input-fg: #020617;
+
+  /* Accent – indigo / lavender */
+  --accent-bg: #6366f1;        /* indigo-500 */
+  --accent-fg: #eef2ff;        /* indigo-50 */
+  --accent-soft-bg: rgba(99, 102, 241, 0.08);
+
+  /* Supporting / info colors */
+  --info-bg: rgba(59, 130, 246, 0.06);   /* blue-500 soft */
+  --info-fg: #2563eb;
+
+  /* Tailwind hook */
+  --background: var(--page-bg);
+  --foreground: var(--page-fg);
 }
 
+/* DARK theme overrides */
+:root[data-theme="dark"] {
+  --page-bg: #020617;          /* slate-950 */
+  --page-fg: #e5e7eb;          /* gray-200 */
+  --sidebar-bg: #020617;
+  --card-bg: #020617;
+  --border-color: #1f2937;     /* gray-800 */
+  --muted-fg: #9ca3af;         /* gray-400 */
+  --card-muted-fg: #9ca3af;
+
+  --input-bg: #020617;
+  --input-border: #374151;
+  --input-fg: #e5e7eb;
+
+  --accent-bg: #818cf8;        /* indigo-400/500 */
+  --accent-fg: #020617;        /* dark text on accent */
+  --accent-soft-bg: rgba(129, 140, 248, 0.16);
+
+  --info-bg: rgba(59, 130, 246, 0.18);
+  --info-fg: #60a5fa;
+
+  --background: var(--page-bg);
+  --foreground: var(--page-fg);
+}
+
+/* Connect to Tailwind’s design tokens (v4) */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -12,15 +64,60 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ========== BASE STYLES ========== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: radial-gradient(circle at top left, #eef2ff 0, #f5f7fb 40%, var(--page-bg) 100%);
+  color: var(--page-fg);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Ensure buttons/inputs inherit font properly */
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+/* Basic form look that respects theme */
+input,
+textarea,
+select {
+  background-color: var(--input-bg);
+  color: var(--input-fg);
+  border: 1px solid var(--input-border);
+}
+
+/* Generic "card" helper */
+.bbs-card {
+  border-radius: 1rem;
+  border: 1px solid var(--border-color);
+  background-color: var(--card-bg);
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.06);
+}
+
+/* Soft hero background for top KYC card */
+.bbs-hero {
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.07),
+    rgba(236, 252, 203, 0)
+  );
 }

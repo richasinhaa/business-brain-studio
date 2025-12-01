@@ -1,10 +1,12 @@
-import React from "react";
-import "@/styles/globals.css";
+// src/app/layout.tsx
+import "./globals.css";
+import type { Metadata } from "next";
 import AppShell from "@/components/layout/AppShell";
+import AuthProvider from "@/components/AuthProvider";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Business Brain Studio",
-  description: "Enter your business once. Generate everything you need.",
+  description: "AI workspace for small businesses",
 };
 
 export default function RootLayout({
@@ -13,9 +15,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body>
-        <AppShell>{children}</AppShell>
+    <html lang="en" suppressHydrationWarning>
+      <body className="min-h-screen bg-[var(--page-bg)] text-[var(--page-fg)]">
+        <AuthProvider>
+          <AppShell>{children}</AppShell>
+        </AuthProvider>
       </body>
     </html>
   );
