@@ -2,10 +2,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 import type { BusinessKyc } from "@/types/kyc";
 
-type UserWithId = {
-  id?: string | null;
+type SessionUser = {
+  id?: string;
   name?: string | null;
   email?: string | null;
   image?: string | null;
@@ -13,15 +14,25 @@ type UserWithId = {
 
 // Load current user's KYC
 export async function GET() {
-  const user = (await getCurrentUser()) as UserWithId | null;
-  const userId = user?.id ?? null;
+  const sessionUser = (await getCurrentUser()) as SessionUser | null;
 
-  if (!userId) {
+  // We rely on email as the stable identifier
+  if (!sessionUser?.email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  // Find the DB user by email
+  const dbUser = await prisma.user.findUnique({
+    where: { email: sessionUser.email },
+  });
+
+  if (!dbUser) {
+    // No DB user yet → no KYC either
+    return NextResponse.json(null);
+  }
+
   const record = await db.businessKyc.findFirst({
-    where: { userId },
+    where: { userId: dbUser.id },
   });
 
   const data = record?.data ?? null;
@@ -30,26 +41,40 @@ export async function GET() {
 
 // Save / update current user's KYC
 export async function POST(req: NextRequest) {
-  const user = (await getCurrentUser()) as UserWithId | null;
-  const userId = user?.id ?? null;
+  const sessionUser = (await getCurrentUser()) as SessionUser | null;
 
-  if (!userId) {
+  if (!sessionUser?.email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  // 🔑 Ensure a User row exists for this email (this removes the FK issue)
+  const dbUser = await prisma.user.upsert({
+    where: { email: sessionUser.email },
+    update: {
+      // keep these in sync but don't force them
+      name: sessionUser.name ?? undefined,
+      image: sessionUser.image ?? undefined,
+    },
+    create: {
+      email: sessionUser.email,
+      name: sessionUser.name ?? null,
+      image: sessionUser.image ?? null,
+    },
+  });
+
   const body = (await req.json()) as BusinessKyc;
 
-  // First, see if a KYC record already exists for this user
+  // Does this user already have a KYC row?
   const existing = await db.businessKyc.findFirst({
-    where: { userId },
+    where: { userId: dbUser.id },
   });
 
   if (!existing) {
-    // Create a new record
+    // Create a new KYC record
     const created = await db.businessKyc.create({
       data: {
-        userId,
-        // Prisma JSON field – we store the whole KYC object as JSON
+        userId: dbUser.id,
+        // store full KYC object as JSON
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         data: body as any,
       },
@@ -57,7 +82,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(created.data);
   }
 
-  // Update existing record by its primary key id
+  // Update existing record
   const updated = await db.businessKyc.update({
     where: { id: existing.id },
     data: {

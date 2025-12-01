@@ -22,6 +22,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
   const [theme, setTheme] = useState<Theme>("light");
   const [businessName, setBusinessName] = useState<string | null>(null);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   const isAuthPage = pathname === "/login";
 
@@ -104,6 +105,11 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
+  // close user menu on route change
+  useEffect(() => {
+    setUserMenuOpen(false);
+  }, [pathname]);
+
   const displayName =
     session?.user?.name ||
     session?.user?.email?.split("@")[0] ||
@@ -185,22 +191,52 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           <span className="hidden sm:inline">AI for Small Businesses</span>
 
           {session?.user && (
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-2 px-2 py-1 rounded-full bg-[var(--page-bg)]/70 border border-[var(--border-color)]">
+            <div className="relative flex items-center">
+              {/* User chip that opens dropdown */}
+              <button
+                type="button"
+                onClick={() => setUserMenuOpen((prev) => !prev)}
+                className="flex items-center gap-2 px-2 py-1 rounded-full bg-[var(--page-bg)]/70 border border-[var(--border-color)] hover:border-[var(--accent-bg)] transition"
+              >
                 <div className="h-6 w-6 rounded-full bg-[var(--card-bg)] border border-[var(--border-color)] flex items-center justify-center text-[10px] font-semibold text-[var(--page-fg)]">
                   {initials}
                 </div>
                 <span className="max-w-[120px] truncate text-[11px] text-[var(--page-fg)]">
                   {displayName}
                 </span>
-              </div>
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="text-[11px] px-2 py-1 rounded-full border border-[var(--border-color)] hover:border-red-500/70 hover:text-red-500 bg-[var(--card-bg)]/70"
-              >
-                Logout
+                <span className="text-[10px]">▾</span>
               </button>
+
+              {/* Dropdown menu */}
+              {userMenuOpen && (
+                <div className="absolute right-0 top-9 w-56 rounded-lg border border-[var(--border-color)] bg-[var(--card-bg)] shadow-lg text-xs z-50">
+                  <div className="px-3 py-2 border-b border-[var(--border-color)]">
+                    <p className="text-[11px] font-semibold truncate">
+                      {displayName}
+                    </p>
+                    {session.user.email && (
+                      <p className="text-[11px] text-[var(--muted-fg)] truncate">
+                        {session.user.email}
+                      </p>
+                    )}
+                  </div>
+
+                  <Link
+                    href="/settings"
+                    className="block px-3 py-2 text-[11px] hover:bg-[var(--accent-soft-bg)]"
+                  >
+                    Settings
+                  </Link>
+
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="w-full text-left px-3 py-2 text-[11px] rounded-b-lg hover:bg-[var(--accent-soft-bg)] text-red-500"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
             </div>
           )}
 
@@ -309,7 +345,10 @@ function NavItem({
     "text-[var(--muted-fg)] hover:bg-[var(--card-bg)] hover:border-[var(--border-color)]";
 
   return (
-    <Link href={href} className={`${base} ${active ? activeClasses : inactiveClasses}`}>
+    <Link
+      href={href}
+      className={`${base} ${active ? activeClasses : inactiveClasses}`}
+    >
       {Icon && (
         <span className="shrink-0">
           <Icon className="h-4 w-4" />

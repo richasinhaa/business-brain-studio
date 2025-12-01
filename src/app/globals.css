@@ -4,32 +4,30 @@
 /* LIGHT as default */
 :root {
   /* Layout & typography */
-  --page-bg: #f5f7fb;          /* soft blue-gray */
-  --page-fg: #020617;          /* slate-950 */
-  --sidebar-bg: #eef2f9;       /* very light bluish */
-  --card-bg: #ffffff;
-  --border-color: #e2e8f0;
-  --muted-fg: #6b7280;         /* gray-500 */
-  --card-muted-fg: #6b7280;
+  --page-bg: #eef1f7;             /* slightly darker page bg */
+  --page-fg: #111827;             /* MUCH darker font (slate-900) */
+
+  --sidebar-bg: #f2f4fa;          /* slightly more contrast */
+  --card-bg: #ffffff;             /* keep white, but we’ll brighten with shadow */
+  --border-color: #d0d7e2;        /* darker border for separation */
+  --muted-fg: #374151;            /* darker gray-700 text */
+  --card-muted-fg: #374151;
 
   /* Inputs */
   --input-bg: #ffffff;
-  --input-border: #d1d5db;
-  --input-fg: #020617;
+  --input-border: #cbd5e1;
+  --input-fg: #111827;
 
-  /* Accent – indigo / lavender */
-  --accent-bg: #6366f1;        /* indigo-500 */
-  --accent-fg: #eef2ff;        /* indigo-50 */
-  --accent-soft-bg: rgba(99, 102, 241, 0.08);
+  /* Accent – richer indigo */
+  --accent-bg: #4338ca;           /* deeper indigo-700 */
+  --accent-fg: #eef2ff;
+  --accent-soft-bg: rgba(67, 56, 202, 0.10); /* slightly brighter soft highlight */
 
-  /* Supporting / info colors */
-  --info-bg: rgba(59, 130, 246, 0.06);   /* blue-500 soft */
-  --info-fg: #2563eb;
-
-  /* Tailwind hook */
-  --background: var(--page-bg);
-  --foreground: var(--page-fg);
+  /* Info / support */
+  --info-bg: rgba(59, 130, 246, 0.16);
+  --info-fg: #1d4ed8;
 }
+
 
 /* DARK theme overrides */
 :root[data-theme="dark"] {

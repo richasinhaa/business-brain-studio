@@ -1,51 +1,38 @@
-import NextAuth from "next-auth";
+// pages/api/auth/[...nextauth].ts
+import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import { prisma } from "@/lib/prisma";
-import type { AdapterUser } from "next-auth/adapters";
-import type { NextAuthOptions } from "next-auth";
 
-export const authOptions = {
-  adapter: PrismaAdapter(prisma),
-
+export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID ?? "",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     }),
   ],
 
-  session: {
-    strategy: "jwt",
+  // 👇 IMPORTANT: use our custom login page instead of /api/auth/signin
+  pages: {
+    signIn: "/login",
   },
-
-  // ✅ This exists at runtime but isn't in the TS type yet,
-  // so we allow it via `satisfies` below.
-  allowDangerousEmailAccountLinking: true,
 
   callbacks: {
-    // Attach user.id to JWT on sign-in
-    async jwt({ token, user }) {
-      if (user) {
-        const u = user as AdapterUser;
-        token.id = u.id;
-      }
-      return token;
-    },
-
-    // Expose id to the client
-    async session({ session, token }) {
-      if (session.user && token.id) {
-        session.user.id = token.id as string;
-      }
-      return session;
-    },
+  async jwt({ token, user }) {
+    // During login, attach user.id to token
+    if (user) {
+      token.id = (user as any).id;
+    }
+    return token;
   },
 
-  debug: process.env.NODE_ENV === "development",
-} satisfies NextAuthOptions & {
-  // extra field that the runtime supports
-  allowDangerousEmailAccountLinking: boolean;
+  async session({ session, token }) {
+    // Expose id to client
+    if (session.user && token.id) {
+      session.user.id = token.id as string;
+    }
+    return session;
+  },
+},
+
 };
 
 export default NextAuth(authOptions);

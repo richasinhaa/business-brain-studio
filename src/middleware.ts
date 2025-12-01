@@ -1,9 +1,13 @@
-// src/middleware.ts
+// middleware.ts
 export { default } from "next-auth/middleware";
 
 export const config = {
+  // All of these routes require the user to be authenticated
   matcher: [
-    // Protect everything except:
-    "/((?!login|api/auth|_next/static|_next/image|favicon.ico).*)",
+    "/",
+    "/kyc/:path*",
+    "/modules/:path*",
+    "/api/kyc/:path*",
+    "/api/generate/:path*",
   ],
 };

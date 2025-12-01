@@ -26,7 +26,7 @@ export const MODULES: ModuleDef[] = [
     name: "Customer Reply Assistant",
     description:
       "Generate perfect customer replies based on your business profile.",
-    route: "/modules/customer-reply",
+    route: "/modules/reply-assistant",
     icon: MessageCircle,
   },
   {
